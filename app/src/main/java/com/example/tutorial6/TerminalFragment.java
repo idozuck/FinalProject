@@ -43,7 +43,7 @@ import java.util.ArrayList;
 
 public class TerminalFragment extends Fragment implements ServiceConnection, SerialListener {
 
-    private enum Connected { False, Pending, True }
+    private enum Connected {False, Pending, True}
 
     private String deviceAddress;
     private SerialService service;
@@ -74,6 +74,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         setRetainInstance(true);
         deviceAddress = getArguments().getString("device");
 
+
     }
 
     @Override
@@ -87,7 +88,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     @Override
     public void onStart() {
         super.onStart();
-        if(service != null)
+        if (service != null)
             service.attach(this);
         else
             getActivity().startService(new Intent(getActivity(), SerialService.class)); // prevents service destroy on unbind from recreated activity caused by orientation change
@@ -95,12 +96,13 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
     @Override
     public void onStop() {
-        if(service != null && !getActivity().isChangingConfigurations())
+        if (service != null && !getActivity().isChangingConfigurations())
             service.detach();
         super.onStop();
     }
 
-    @SuppressWarnings("deprecation") // onAttach(context) was added with API 23. onAttach(activity) works for all API versions
+    @SuppressWarnings("deprecation")
+    // onAttach(context) was added with API 23. onAttach(activity) works for all API versions
     @Override
     public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
@@ -109,14 +111,17 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
     @Override
     public void onDetach() {
-        try { getActivity().unbindService(this); } catch(Exception ignored) {}
+        try {
+            getActivity().unbindService(this);
+        } catch (Exception ignored) {
+        }
         super.onDetach();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(initialStart && service != null) {
+        if (initialStart && service != null) {
             initialStart = false;
             getActivity().runOnUiThread(this::connect);
         }
@@ -126,7 +131,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     public void onServiceConnected(ComponentName name, IBinder binder) {
         service = ((SerialService.SerialBinder) binder).getService();
         service.attach(this);
-        if(initialStart && isResumed()) {
+        if (initialStart && isResumed()) {
             initialStart = false;
             getActivity().runOnUiThread(this::connect);
         }
@@ -157,7 +162,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         sendBtn.setOnClickListener(v -> send(sendText.getText().toString()));
 
         mpLineChart = (LineChart) view.findViewById(R.id.line_chart);
-        lineDataSet1 =  new LineDataSet(emptyDataValues(), "temperature");
+        lineDataSet1 = new LineDataSet(emptyDataValues(), "temperature");
 
         dataSets.add(lineDataSet1);
         data = new LineData(dataSets);
@@ -166,15 +171,16 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
         Button buttonClear = (Button) view.findViewById(R.id.button1);
         Button buttonCsvShow = (Button) view.findViewById(R.id.button2);
-
+        Button recordButton = (Button) view.findViewById(R.id.button3);
 
         buttonClear.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Toast.makeText(getContext(),"Clear",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Clear", Toast.LENGTH_SHORT).show();
                 LineData data = mpLineChart.getData();
                 ILineDataSet set = data.getDataSetByIndex(0);
                 data.getDataSetByIndex(0);
-                while(set.removeLast()){}
+                while (set.removeLast()) {
+                }
 
             }
         });
@@ -187,6 +193,13 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
             }
         });
 
+        //record button
+        recordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClickRecord();
+            }
+        });
         return view;
     }
 
@@ -229,14 +242,15 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     /*
      * Serial + UI
      */
-    private String[] clean_str(String[] stringsArr){
-         for (int i = 0; i < stringsArr.length; i++)  {
-             stringsArr[i]=stringsArr[i].replaceAll(" ","");
+    private String[] clean_str(String[] stringsArr) {
+        for (int i = 0; i < stringsArr.length; i++) {
+            stringsArr[i] = stringsArr[i].replaceAll(" ", "");
         }
 
 
         return stringsArr;
     }
+
     private void connect() {
         try {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -256,14 +270,14 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     }
 
     private void send(String str) {
-        if(connected != Connected.True) {
+        if (connected != Connected.True) {
             Toast.makeText(getActivity(), "not connected", Toast.LENGTH_SHORT).show();
             return;
         }
         try {
             String msg;
             byte[] data;
-            if(hexEnabled) {
+            if (hexEnabled) {
                 StringBuilder sb = new StringBuilder();
                 TextUtil.toHexString(sb, TextUtil.fromHexString(str));
                 TextUtil.toHexString(sb, newline.getBytes());
@@ -283,39 +297,40 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     }
 
     private void receive(byte[] message) {
-        if(hexEnabled) {
+        if (hexEnabled) {
             receiveText.append(TextUtil.toHexString(message) + '\n');
         } else {
             String msg = new String(message);
-            if(newline.equals(TextUtil.newline_crlf) && msg.length() > 0) {
+            if (newline.equals(TextUtil.newline_crlf) && msg.length() > 0) {
                 // don't show CR as ^M if directly before LF
                 String msg_to_save = msg;
                 msg_to_save = msg.replace(TextUtil.newline_crlf, TextUtil.emptyString);
-                if (msg_to_save.length() > 1){
+                if (msg_to_save.length() > 1) {
 
-                String[] parts = msg_to_save.split(",");
-                parts = clean_str(parts);
-                try {
-
-
-                    File file = new File("/storage/self/primary/Terminal/");
-                    file.mkdirs();
-                    String csv = "/storage/self/primary/Terminal/data.csv";
-                    CSVWriter csvWriter = new CSVWriter(new FileWriter(csv,true));
-
-                    String row[]= new String[]{parts[0],parts[1]};
-                    csvWriter.writeNext(row);
-                    csvWriter.close();
-                    data.addEntry(new Entry(Integer.valueOf(parts[1]),Float.parseFloat(parts[0])),0);
-                    lineDataSet1.notifyDataSetChanged(); // let the data know a dataSet changed
-                    mpLineChart.notifyDataSetChanged(); // let the chart know it's data changed
-                    mpLineChart.invalidate(); // refresh
+                    String[] parts = msg_to_save.split(",");
+                    parts = clean_str(parts);
+                    try {
 
 
-                } catch (IOException e) {
+                        File file = new File("/storage/self/primary/Terminal/");
+                        file.mkdirs();
+                        String csv = "/storage/self/primary/Terminal/data.csv";
+                        CSVWriter csvWriter = new CSVWriter(new FileWriter(csv, true));
 
-                    e.printStackTrace();
-                }}
+                        String row[] = new String[]{parts[0], parts[1]};
+                        csvWriter.writeNext(row);
+                        csvWriter.close();
+                        data.addEntry(new Entry(Integer.valueOf(parts[1]), Float.parseFloat(parts[0])), 0);
+                        lineDataSet1.notifyDataSetChanged(); // let the data know a dataSet changed
+                        mpLineChart.notifyDataSetChanged(); // let the chart know it's data changed
+                        mpLineChart.invalidate(); // refresh
+
+
+                    } catch (IOException e) {
+
+                        e.printStackTrace();
+                    }
+                }
 
                 msg = msg.replace(TextUtil.newline_crlf, TextUtil.newline_lf);
                 // sand here msg to function that saves it to csv
@@ -363,14 +378,18 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         disconnect();
     }
 
-    private ArrayList<Entry> emptyDataValues()
-    {
+    private ArrayList<Entry> emptyDataValues() {
         ArrayList<Entry> dataVals = new ArrayList<Entry>();
         return dataVals;
     }
 
-    private void OpenLoadCSV(){
-        Intent intent = new Intent(getContext(),LoadCSV.class);
+    private void OpenLoadCSV() {
+        Intent intent = new Intent(getContext(), LoadCSV.class);
+        startActivity(intent);
+    }
+
+    private void ClickRecord() {
+        Intent intent = new Intent(getContext(), Record.class);
         startActivity(intent);
     }
 
