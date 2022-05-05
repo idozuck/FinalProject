@@ -26,15 +26,22 @@ import java.util.List;
 import java.util.Locale;
 
 public class Record extends AppCompatActivity {
+    private List<String[]> data = new ArrayList<String[]>();
+    private String fileName;
+    private Boolean collectingData = false;
+    private Boolean doneCollectingData = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
 
+
         //views
         Button startRecordButton = (Button) findViewById(R.id.startRecordButton);
         Button stopRecordButton = (Button) findViewById(R.id.stopRecordButton);
+        Button resetRecordButton = (Button) findViewById(R.id.resetRecordButton);
+        Button saveRecordButton = (Button) findViewById(R.id.saveRecordButton);
 
         EditText numberOfStepsView = (EditText) findViewById(R.id.numberOfSteps);
         EditText fileNameView = (EditText) findViewById(R.id.fileName);
@@ -57,18 +64,42 @@ public class Record extends AppCompatActivity {
                 ClickStopRecordButton();
             }
         });
+
+        resetRecordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClickResetRecordButton();
+            }
+        });
+
+        saveRecordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClickSaveRecordButton();
+            }
+        });
     }
 
 
     private void ClickStartRecordButton() {
-        //TODO: add a toast
+        //check if already started
+        if (collectingData) {
+            Context context = getApplicationContext();
+            CharSequence text = "you already started";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            return;
+        }
+
         //get file name
         EditText fileNameView = (EditText) findViewById(R.id.fileName);
         if (TextUtils.isEmpty(fileNameView.getText())) {
             fileNameView.setError("File name is required!");
             return;
         }
-        String fileName = fileNameView.getText().toString();
+        this.fileName = fileNameView.getText().toString();
 
         //get number of steps
         EditText numberOfStepsView = (EditText) findViewById(R.id.numberOfSteps);
@@ -92,14 +123,13 @@ public class Record extends AppCompatActivity {
 
         //set path
         String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
-        String filePath = baseDir + File.separator + fileName;
+        String filePath = baseDir + File.separator + "IOT_out_files" + File.separator + this.fileName + ".csv";
 
         //get time
         String currentTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
 
         //write to csv
         File f = new File(filePath);
-        CSVWriter writer;
         //check if directory exists
         File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "IOT_out_files");
         if (!dir.isDirectory()) {
@@ -115,64 +145,146 @@ public class Record extends AppCompatActivity {
             toast.show();
             return;
         }
-        String csv = (Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "IOT_out_files" + File.separator + fileName + ".csv");
+
+        //set data
+        this.data.add(new String[]{"NAME:", this.fileName + ".csv"});
+        this.data.add(new String[]{"EXPERIMENT TIME:", currentTime});
+        this.data.add(new String[]{"ACTIVITY TYPE:", activity});
+        this.data.add(new String[]{});
+        this.data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
+
+        collectingData = true;
+
+        //show starting message
+        Context context = getApplicationContext();
+        CharSequence text = "Starting...";
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+
+//        final Thread t = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                int x = 1;
+//                while (collectingData) {
+//                    //TODO: Gil, Alon, add here the measurements from the IMU sensor in the following format:
+//                    // this.data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
+//                    // you may use a for loop containing the above line the add the measurments to the csv
+//                    // you should use this line for each measure, I took care in all the rest, and it will
+//                    // automatically do the csv in the wanted format.
+//                    // add it here.
+//                    this.data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
+//                    for (int i = 0; i < 20; i++) {
+//                        x = x * 2;
+//                        System.out.println(x);
+//                    }
+//                    System.out.println(x);
+//                }
+//            }
+//        });
+//        t.start();
+        collectData();
+    }
+
+    private void collectData() {
+        int x = 1;
+        Button stopRecordButton = (Button) findViewById(R.id.stopRecordButton);
+
+        stopRecordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClickStopRecordButton();
+            }
+        });
+
+        while (collectingData) {
+            //TODO: Gil, Alon, add here the measurements from the IMU sensor in the following format:
+            // data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
+            // you may use a for loop containing the above line the add the measurments to the csv
+            // you should use this line for each measure, I took care in all the rest, and it will
+            // automatically do the csv in the wanted format.
+            // add it here.
+            data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
+            for (int i = 0; i < 10; i++) {
+                x = x * 2;
+                System.out.println(x);
+            }
+            System.out.println(x);
+
+        }
+    }
+
+    private void ClickStopRecordButton() {
+        //check if didn't started yet
+        if (!collectingData) {
+            Context context = getApplicationContext();
+            CharSequence text = "you didn't started yet";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            return;
+        }
+        collectingData = false;
+
+
+        //show starting message
+        Context context = getApplicationContext();
+        CharSequence text = "Stopping...";
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
+
+
+    private void ClickSaveRecordButton() {
+        if (!collectingData) {
+            Context context = getApplicationContext();
+            CharSequence text = "you didn't started yet";
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            return;
+        }
+        if (!doneCollectingData) {
+            Context context = getApplicationContext();
+            CharSequence text = "you didn't stop yet";
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+            return;
+        }
+
+        //write to csv
+        CSVWriter writer;
+        String csv = (Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "IOT_out_files" + File.separator + this.fileName + ".csv");
         try {
             writer = new CSVWriter(new FileWriter(csv));
-
-            List<String[]> data = new ArrayList<String[]>();
-            data.add(new String[]{"NAME:", fileName + ".csv"});
-            data.add(new String[]{"EXPERIMENT TIME:", currentTime});
-            data.add(new String[]{"ACTIVITY TYPE:", activity});
-            data.add(new String[]{});
-            data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
-            //TODO: add everything
-//                data.add(new String[]{"Germany", "Berlin"});
-
-            writer.writeAll(data); // data is adding to csv
-
+            writer.writeAll(this.data); // data is adding to csv
             writer.close();
-//            callRead();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        Button stopRecordButton = (Button) findViewById(R.id.stopRecordButton);
-        stopRecordButton.setClickable(true);
-        Button startRecordButton = (Button) findViewById(R.id.startRecordButton);
-        startRecordButton.setClickable(false);
+        ClickResetRecordButton();
+        //show saving message
+        Context context = getApplicationContext();
+        CharSequence text = "Saving...";
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 
-    private void ClickStopRecordButton(String filePath, List<String[]> data) {
-        //TODO: add a toast
-//        mFileWriter = new FileWriter(filePath, true);
-//        writer = new CSVWriter(mFileWriter);
+    private void ClickResetRecordButton() {
+        data = new ArrayList<String[]>();
+        collectingData = false;
+        doneCollectingData = false;
 
-        //write to csv
-        CSVWriter writer;
-        //check if directory exists
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "IOT_out_files");
-        if (!dir.isDirectory()) {
-            dir.mkdir();
-        } else {
-            String csv = (Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "IOT_out_files" + File.separator + fileName + ".csv");
-            try {
-                writer = new CSVWriter(new FileWriter(csv));
-
-                data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
-
-                writer.writeAll(data); // data is adding to csv
-
-                writer.close();
-//            callRead();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        //set buttons mode
-        Button stopRecordButton = (Button) findViewById(R.id.stopRecordButton);
-        stopRecordButton.setClickable(false);
-        Button startRecordButton = (Button) findViewById(R.id.startRecordButton);
-        startRecordButton.setClickable(true);
+        //show resetting message
+        Context context = getApplicationContext();
+        CharSequence text = "Resetting...";
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 }
