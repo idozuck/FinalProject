@@ -30,6 +30,8 @@ public class Record extends AppCompatActivity {
     private String fileName;
     private Boolean collectingData = false;
     private Boolean doneCollectingData = false;
+    private volatile boolean running = true;
+    private Thread t;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +56,43 @@ public class Record extends AppCompatActivity {
         startRecordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ClickStartRecordButton();
+                Boolean succeeded = ClickStartRecordButton();
+                if (succeeded) {
+                    running = true;
+                    t = new Thread(new Runnable() {
+                        public void run() {
+                            while (running) {
+                                //TODO: Gil, Alon, add here the measurements from the IMU sensor in the following format:
+                                // data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
+                                // you may use a for loop containing the above line the add the measurments to the csv
+                                // you should use this line for each measure, I took care in all the rest, and it will
+                                // automatically do the csv in the wanted format.
+                                // add it here.
+
+//                                data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
+
+                                System.out.println("Running");
+                                try {
+                                    Thread.sleep(30);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+                    t.start();
+                }
+
             }
         });
 
         stopRecordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                running = false;
+
                 ClickStopRecordButton();
+
             }
         });
 
@@ -81,7 +112,7 @@ public class Record extends AppCompatActivity {
     }
 
 
-    private void ClickStartRecordButton() {
+    private Boolean ClickStartRecordButton() {
         //check if already started
         if (collectingData) {
             Context context = getApplicationContext();
@@ -90,14 +121,14 @@ public class Record extends AppCompatActivity {
 
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
-            return;
+            return false;
         }
 
         //get file name
         EditText fileNameView = (EditText) findViewById(R.id.fileName);
         if (TextUtils.isEmpty(fileNameView.getText())) {
             fileNameView.setError("File name is required!");
-            return;
+            return false;
         }
         this.fileName = fileNameView.getText().toString();
 
@@ -105,7 +136,7 @@ public class Record extends AppCompatActivity {
         EditText numberOfStepsView = (EditText) findViewById(R.id.numberOfSteps);
         if (TextUtils.isEmpty(numberOfStepsView.getText())) {
             numberOfStepsView.setError("Number of steps is required!");
-            return;
+            return false;
         }
         String numberOfSteps = fileNameView.getText().toString();
 
@@ -116,7 +147,7 @@ public class Record extends AppCompatActivity {
         if (radioButtonID == -1) {
             // no radio buttons are checked
             walkButton.setError("Type of activity is required!");
-            return;
+            return false;
         }
         RadioButton radioButton = radioGroup.findViewById(radioButtonID);
         String activity = (String) radioButton.getText();
@@ -143,7 +174,7 @@ public class Record extends AppCompatActivity {
 
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
-            return;
+            return false;
         }
 
         //set data
@@ -161,57 +192,7 @@ public class Record extends AppCompatActivity {
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
-
-//        final Thread t = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                int x = 1;
-//                while (collectingData) {
-//                    //TODO: Gil, Alon, add here the measurements from the IMU sensor in the following format:
-//                    // this.data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
-//                    // you may use a for loop containing the above line the add the measurments to the csv
-//                    // you should use this line for each measure, I took care in all the rest, and it will
-//                    // automatically do the csv in the wanted format.
-//                    // add it here.
-//                    this.data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
-//                    for (int i = 0; i < 20; i++) {
-//                        x = x * 2;
-//                        System.out.println(x);
-//                    }
-//                    System.out.println(x);
-//                }
-//            }
-//        });
-//        t.start();
-        collectData();
-    }
-
-    private void collectData() {
-        int x = 1;
-        Button stopRecordButton = (Button) findViewById(R.id.stopRecordButton);
-
-        stopRecordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ClickStopRecordButton();
-            }
-        });
-
-        while (collectingData) {
-            //TODO: Gil, Alon, add here the measurements from the IMU sensor in the following format:
-            // data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
-            // you may use a for loop containing the above line the add the measurments to the csv
-            // you should use this line for each measure, I took care in all the rest, and it will
-            // automatically do the csv in the wanted format.
-            // add it here.
-            data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
-            for (int i = 0; i < 10; i++) {
-                x = x * 2;
-                System.out.println(x);
-            }
-            System.out.println(x);
-
-        }
+        return true;
     }
 
     private void ClickStopRecordButton() {
@@ -226,7 +207,7 @@ public class Record extends AppCompatActivity {
             return;
         }
         collectingData = false;
-
+        doneCollectingData = true;
 
         //show starting message
         Context context = getApplicationContext();
@@ -236,16 +217,15 @@ public class Record extends AppCompatActivity {
         toast.show();
     }
 
-
     private void ClickSaveRecordButton() {
-        if (!collectingData) {
-            Context context = getApplicationContext();
-            CharSequence text = "you didn't started yet";
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-            return;
-        }
+//        if (!collectingData) {
+//            Context context = getApplicationContext();
+//            CharSequence text = "you didn't started yet";
+//            int duration = Toast.LENGTH_SHORT;
+//            Toast toast = Toast.makeText(context, text, duration);
+//            toast.show();
+//            return;
+//        }
         if (!doneCollectingData) {
             Context context = getApplicationContext();
             CharSequence text = "you didn't stop yet";
@@ -254,6 +234,7 @@ public class Record extends AppCompatActivity {
             toast.show();
             return;
         }
+        doneCollectingData = false;
 
         //write to csv
         CSVWriter writer;
@@ -266,13 +247,13 @@ public class Record extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        ClickResetRecordButton();
         //show saving message
         Context context = getApplicationContext();
         CharSequence text = "Saving...";
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
+        ClickResetRecordButton();
     }
 
     private void ClickResetRecordButton() {
