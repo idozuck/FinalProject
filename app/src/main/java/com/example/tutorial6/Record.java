@@ -181,6 +181,8 @@ public class Record extends AppCompatActivity {
         this.data.add(new String[]{"NAME:", this.fileName + ".csv"});
         this.data.add(new String[]{"EXPERIMENT TIME:", currentTime});
         this.data.add(new String[]{"ACTIVITY TYPE:", activity});
+        this.data.add(new String[]{"COUNT OF ACTUAL STEPS", numberOfSteps});
+
         this.data.add(new String[]{});
         this.data.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
 
