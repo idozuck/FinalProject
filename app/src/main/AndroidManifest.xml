@@ -15,15 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Record"
+            android:name=".EmailPasswordActivity"
             android:exported="false" />
-        <activity android:name=".LoadCSV">
-            <intent-filter>
-                <action android:name="android.intent.action" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity
+            android:name=".SendEmail2"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

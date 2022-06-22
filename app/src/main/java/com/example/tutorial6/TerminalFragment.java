@@ -1,5 +1,9 @@
 package com.example.tutorial6;
 
+import androidx.appcompat.app.AppCompatActivity;
+import java.io.FileReader;
+import java.io.*;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -8,11 +12,15 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
@@ -22,6 +30,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,10 +47,17 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.opencsv.CSVWriter;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
 public class TerminalFragment extends Fragment implements ServiceConnection, SerialListener {
 
@@ -58,22 +76,12 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     private boolean pendingNewline = false;
     private String newline = TextUtil.newline_crlf;
 
-    LineChart mpLineChart;
-    LineDataSet lineDataSet1;
-    ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-    LineData data;
-
-
-    /*
-     * Lifecycle
-     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         setRetainInstance(true);
         deviceAddress = getArguments().getString("device");
-
 
     }
 
@@ -161,45 +169,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         View sendBtn = view.findViewById(R.id.send_btn);
         sendBtn.setOnClickListener(v -> send(sendText.getText().toString()));
 
-        mpLineChart = (LineChart) view.findViewById(R.id.line_chart);
-        lineDataSet1 = new LineDataSet(emptyDataValues(), "temperature");
-
-        dataSets.add(lineDataSet1);
-        data = new LineData(dataSets);
-        mpLineChart.setData(data);
-        mpLineChart.invalidate();
-
-        Button buttonClear = (Button) view.findViewById(R.id.button1);
-        Button buttonCsvShow = (Button) view.findViewById(R.id.button2);
-        Button recordButton = (Button) view.findViewById(R.id.button3);
-
-        buttonClear.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(getContext(), "Clear", Toast.LENGTH_SHORT).show();
-                LineData data = mpLineChart.getData();
-                ILineDataSet set = data.getDataSetByIndex(0);
-                data.getDataSetByIndex(0);
-                while (set.removeLast()) {
-                }
-
-            }
-        });
-
-        buttonCsvShow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OpenLoadCSV();
-
-            }
-        });
-
-        //record button
-        recordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ClickRecord();
-            }
-        });
         return view;
     }
 
@@ -305,35 +274,35 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 // don't show CR as ^M if directly before LF
                 String msg_to_save = msg;
                 msg_to_save = msg.replace(TextUtil.newline_crlf, TextUtil.emptyString);
+                // check message length
                 if (msg_to_save.length() > 1) {
-
+                    // split message string by ',' char
                     String[] parts = msg_to_save.split(",");
+                    // function to trim blank spaces
                     parts = clean_str(parts);
+
+                    // saving data to csv
                     try {
 
-
+                        // create new csv unless file already exists
                         File file = new File("/storage/self/primary/Terminal/");
                         file.mkdirs();
                         String csv = "/storage/self/primary/Terminal/data.csv";
-                        CSVWriter csvWriter = new CSVWriter(new FileWriter(csv, true));
+                        // Alon removed append
+                        CSVWriter csvWriter = new CSVWriter(new FileWriter(csv));
 
-                        String row[] = new String[]{parts[0], parts[1]};
+                        // parse string values, in this case [0] is tmp & [1] is count (t)
+                        String row[] = new String[]{parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]};
                         csvWriter.writeNext(row);
                         csvWriter.close();
-                        data.addEntry(new Entry(Integer.valueOf(parts[1]), Float.parseFloat(parts[0])), 0);
-                        lineDataSet1.notifyDataSetChanged(); // let the data know a dataSet changed
-                        mpLineChart.notifyDataSetChanged(); // let the chart know it's data changed
-                        mpLineChart.invalidate(); // refresh
-
 
                     } catch (IOException e) {
-
                         e.printStackTrace();
                     }
                 }
 
                 msg = msg.replace(TextUtil.newline_crlf, TextUtil.newline_lf);
-                // sand here msg to function that saves it to csv
+                // send msg to function that saves it to csv
                 // special handling if CR and LF come in separate fragments
                 if (pendingNewline && msg.charAt(0) == '\n') {
                     Editable edt = receiveText.getEditableText();
@@ -342,7 +311,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                 }
                 pendingNewline = msg.charAt(msg.length() - 1) == '\r';
             }
-            receiveText.append(TextUtil.toCaretString(msg, newline.length() != 0));
+//            receiveText.append(TextUtil.toCaretString(msg, newline.length() != 0));
         }
     }
 
@@ -369,7 +338,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
 
     @Override
     public void onSerialRead(byte[] data) {
-        receive(data);
+        try {
+            receive(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -383,14 +356,7 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         return dataVals;
     }
 
-    private void OpenLoadCSV() {
-        Intent intent = new Intent(getContext(), LoadCSV.class);
-        startActivity(intent);
-    }
 
-    private void ClickRecord() {
-        Intent intent = new Intent(getContext(), Record.class);
-        startActivity(intent);
-    }
+
 
 }

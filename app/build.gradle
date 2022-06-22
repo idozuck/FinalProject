@@ -1,7 +1,9 @@
 plugins {
     id 'com.android.application'
+    id 'com.chaquo.python'
 }
-
+//apply plugin: 'com.android.application'
+//apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 29
 
@@ -13,6 +15,28 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
+
+        python {
+            //buildPython "C:/Users/atsai/PycharmProjects/untitled/venv/scripts/python.exe"
+//            buildPython "C:/Users/atsai/anaconda3/envs/IOT/python.exe"//TODO: change
+            buildPython "C:/Users/idozu/Anaconda3/envs/base-Ido/python.exe"//TODO: change
+
+            pip {
+                install "tensorflow"
+                install "numpy"
+                install "joblib"
+            }
+
+        }
+        sourceSets {
+            main {
+                python.srcDir "src/main/python"
+            }
+        }
     }
 
     buildTypes {
@@ -25,6 +49,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -34,5 +61,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     implementation 'com.opencsv:opencsv:4.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-
+    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
 }

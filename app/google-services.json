@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "722064526214",
+    "project_id": "finalprojectiot-c637b",
+    "storage_bucket": "finalprojectiot-c637b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:722064526214:android:5464585aabd8a76cd9ba07",
+        "android_client_info": {
+          "package_name": "com.example.tutorial6"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "722064526214-9vebl1tqjs7bvgnti65dls7s9mludetv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9rPepGyz_4thIwWIx_BWeKLaE2KUjayg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "722064526214-9vebl1tqjs7bvgnti65dls7s9mludetv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
