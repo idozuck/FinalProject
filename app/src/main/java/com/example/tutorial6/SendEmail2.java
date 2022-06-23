@@ -1,38 +1,17 @@
 package com.example.tutorial6;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
-
-//import com.google.android.gms.tasks.OnCompleteListener;
-//import com.google.android.gms.tasks.Task;
-//import com.google.firebase.auth.AuthResult;
-//import com.google.firebase.auth.FirebaseAuth;
-//import com.google.firebase.auth.FirebaseUser;
-
-import com.example.tutorial6.EmailPasswordActivity;
-import com.google.firebase.auth.FirebaseUser;
 
 public class SendEmail2 extends AppCompatActivity {
-    private FirebaseAuth mAuth;
-
-    private static final String TAG = "EmailPassword";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_email2);
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
 
         Button sendEmail = (Button) findViewById(R.id.sendButton);
 
@@ -54,21 +33,8 @@ public class SendEmail2 extends AppCompatActivity {
                 String email = emailView.getText().toString();
                 String phone = phoneView.getText().toString();
                 String password = passwordView.getText().toString();
-                EmailPasswordActivity emailpassword = new EmailPasswordActivity();
-                emailpassword.createAccount("idozuck9@gmail.com", "123456");
-//                emailpassword.createAccount(email, password);
-//                mAuth.createUserWithEmailAndPassword(email, password);
-//                createAccount(email, password);
                 System.out.println();
-
             }
-
-//            public void updateUI(FirebaseUser user) {
-//
-//            }
         });
-
-
     }
-
 }

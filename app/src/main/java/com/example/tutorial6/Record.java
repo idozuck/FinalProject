@@ -1,49 +1,29 @@
 package com.example.tutorial6;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
-
-
-import android.content.Context;
-import android.os.Environment;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.opencsv.CSVWriter;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.lang.*;
 
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
 
-public class MainActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class Record extends AppCompatActivity {
+
     // Record Activity
     private volatile boolean running = false;
     private Runnable t;
@@ -58,19 +38,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportFragmentManager().addOnBackStackChangedListener(this);
-        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-        }
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment, new DevicesFragment(), "devices").commit();
-        } else {
-            onBackStackChanged();
-        }
+        setContentView(R.layout.activity_record);
 
         if (!Python.isStarted()) {
             Python.start(new AndroidPlatform(this));
@@ -79,9 +47,6 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         Python py = Python.getInstance();
         PyObject pyobj = py.getModule("test");
 
-
-        //Record Activity
-        //        views
         Button createReportButton = (Button) findViewById(R.id.createReportButton);
         Button startButton = (Button) findViewById(R.id.startButton);
 
@@ -157,19 +122,6 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         Intent intent = new Intent(this, SendEmail2.class);
         startActivity(intent);
     }
-
-
-    @Override
-    public void onBackStackChanged() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount() > 0);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
     //Record Activity
 //    private Boolean ClickStartRecordButton() {
 //
@@ -327,6 +279,5 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 //        Toast toast = Toast.makeText(context, text, duration);
 //        toast.show();
 //    }
-
 
 }

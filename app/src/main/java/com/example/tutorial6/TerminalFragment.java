@@ -1,6 +1,7 @@
 package com.example.tutorial6;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.FileReader;
 import java.io.*;
 
@@ -31,8 +32,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,6 +85,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         setHasOptionsMenu(true);
         setRetainInstance(true);
         deviceAddress = getArguments().getString("device");
+        makeAllVisible();
+
+    }
+
+    public void makeAllVisible() {
 
     }
 
@@ -156,6 +164,11 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_terminal, container, false);
+        View viewMain = inflater.inflate(R.layout.activity_main, container, false);
+//        RelativeLayout relativeLayout = (RelativeLayout) viewMain.findViewById(R.id.fragment);
+//        Button button = (Button) viewMain.findViewById(R.id.startButton);
+//        relativeLayout.setVisibility(View.GONE);
+//        button.setVisibility(View.GONE);
         receiveText = view.findViewById(R.id.receive_text);                          // TextView performance decreases with number of spans
         receiveText.setTextColor(getResources().getColor(R.color.colorRecieveText)); // set as default color to reduce number of spans
         receiveText.setMovementMethod(ScrollingMovementMethod.getInstance());
@@ -285,9 +298,9 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
                     try {
 
                         // create new csv unless file already exists
-                        File file = new File("/storage/self/primary/Terminal/");
+                        File file = new File("/storage/self/primary/IoT/");
                         file.mkdirs();
-                        String csv = "/storage/self/primary/Terminal/data.csv";
+                        String csv = "/storage/self/primary/IoT/data.csv";
                         // Alon removed append
                         CSVWriter csvWriter = new CSVWriter(new FileWriter(csv));
 
@@ -355,8 +368,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         ArrayList<Entry> dataVals = new ArrayList<Entry>();
         return dataVals;
     }
-
-
 
 
 }
