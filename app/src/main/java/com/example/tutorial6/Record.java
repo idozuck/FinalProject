@@ -31,8 +31,8 @@ public class Record extends AppCompatActivity {
     private TextView HR_text;
     private TextView SPO2_text;
     private TextView BP_text;
-    private int OldRange = (250000 - 200000);
-    private int NewRange = 3;
+    private final int OldRange = (250000 - 200000);
+    private final int NewRange = 3;
     private double newval_ppg;
 
     @Override
@@ -84,6 +84,10 @@ public class Record extends AppCompatActivity {
                             String spo2 = statsArray[3];
                             String valid_spo2 = statsArray[4];
                             String ppg = statsArray[5];
+                            String accX = statsArray[6];
+                            String accY = statsArray[7];
+                            String accZ = statsArray[8];
+                            System.out.println("heart_rate" + heart_rate + " spo2" + spo2 + " ppg" + ppg + " accX" + accX + " accY" + accY + " accZ" + accZ);
                             float ppg_fl = Float.parseFloat(ppg);
                             if (!heart_rate.equals("\u0000-999\u0000")) {
                                 HR_text.setText("HR: " + heart_rate);
@@ -99,7 +103,7 @@ public class Record extends AppCompatActivity {
 
                                 newval_ppg = (((ppg_fl - 200000) * NewRange) / OldRange) + 0.5;
                                 PyObject obj = pyobj.callAttr("calc_BP", newval_ppg);
-                                BP_text.setText("Blood Pressure: " + obj.toString());
+                                BP_text.setText("Arterial Blood Pressure: " + obj.toString());
                             } else {
                                 BP_text.setText("Blood Pressure: " + "ERROR");
                             }
@@ -118,7 +122,8 @@ public class Record extends AppCompatActivity {
         });
 
     }
-    public void openSendEmailActivity(){
+
+    public void openSendEmailActivity() {
         Intent intent = new Intent(this, SendEmail2.class);
         startActivity(intent);
     }

@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -83,10 +84,86 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         //Record Activity
         //        views
         Button startButton = (Button) findViewById(R.id.startButton);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.recordLayout);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                start();
+//                start();
+                layout.setVisibility(View.VISIBLE);
+                startButton.setVisibility(View.GONE);
+            }
+        });
+        Button createReportButton = (Button) findViewById(R.id.createReportButton);
+        Button startRecordButton = (Button) findViewById(R.id.startRecordButton);
+
+        HR_text = (TextView) findViewById(R.id.HR);
+        SPO2_text = (TextView) findViewById(R.id.SPO2);
+        BP_text = (TextView) findViewById(R.id.BP);
+
+
+        //buttons clicked
+        createReportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                running = false;
+                openSendEmailActivity();
+            }
+        });
+
+        startRecordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                running = true;
+                hand = new Handler();
+                t = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            String acc_data_path = "/storage/self/primary/IoT/data.csv";
+                            BufferedReader buff_read = new BufferedReader(new FileReader(acc_data_path));
+                            String text_row = buff_read.readLine();
+                            String new_text_row = text_row.replace('"', '\0');
+                            String[] statsArray = new_text_row.split(",");
+                            String time_str = statsArray[0];
+                            String heart_rate = statsArray[1];
+                            String valid_heart_rate = statsArray[2];
+                            String spo2 = statsArray[3];
+                            String valid_spo2 = statsArray[4];
+                            String ppg = statsArray[5];
+                            String accX = statsArray[6];
+                            String accY = statsArray[7];
+                            String accZ = statsArray[8];
+                            System.out.println("heart_rate" + heart_rate + " spo2" + spo2 + " ppg" + ppg + " accX" + accX + " accY" + accY + " accZ" + accZ);
+                            float ppg_fl = Float.parseFloat(ppg);
+                            if (!heart_rate.equals("\u0000-999\u0000")) {
+                                HR_text.setText("HR: " + heart_rate);
+                            } else {
+                                HR_text.setText("HR: " + "ERROR");
+                            }
+                            if (!spo2.equals("\u0000-999\u0000")) {
+                                SPO2_text.setText("SPO2: " + spo2);
+                            } else {
+                                SPO2_text.setText("SPO2: " + "ERROR");
+                            }
+                            if (ppg_fl > 200000) {
+
+                                newval_ppg = (((ppg_fl - 200000) * NewRange) / OldRange) + 0.5;
+                                PyObject obj = pyobj.callAttr("calc_BP", newval_ppg);
+                                BP_text.setText("Arterial Blood Pressure: " + obj.toString());
+                            } else {
+                                BP_text.setText("Blood Pressure: " + "ERROR");
+                            }
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println("Running");
+                        if (running) {
+                            hand.postDelayed(this, 100);
+                        }
+                    }
+                };
+                hand.postDelayed(t, 100);
             }
         });
 
@@ -95,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     public void start() {
         Intent intent = new Intent(this, Record.class);
         startActivity(intent);
+
     }
 
 
@@ -267,5 +345,8 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 //        toast.show();
 //    }
 
-
+    public void openSendEmailActivity() {
+        Intent intent = new Intent(this, SendEmail2.class);
+        startActivity(intent);
+    }
 }

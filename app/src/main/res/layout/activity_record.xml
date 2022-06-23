@@ -58,7 +58,7 @@
                 android:layout_height="80dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
-                android:text="Blood Pressure"
+                android:text="Arterial Blood Pressure"
                 android:textSize="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

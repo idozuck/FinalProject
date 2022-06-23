@@ -26,7 +26,7 @@ public class Results extends AppCompatActivity {
 
 
     public void openRecord() {
-        Intent intent = new Intent(this, Record.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 }
