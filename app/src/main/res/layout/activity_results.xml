@@ -29,25 +29,25 @@
             android:textSize="20dp" />
 
         <TextView
-            android:id="@+id/avgBloodPressure"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="Average Blood Pressure"
-            android:textSize="20dp" />
-
-        <TextView
             android:id="@+id/avgSPo2"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="Average SPo2"
             android:textSize="20dp" />
 
+        <TextView
+            android:id="@+id/avgBloodPressure"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Average Blood Pressure"
+            android:textSize="20dp" />
+
+
         <Button
             android:id="@+id/buttonBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Go Back"
-            android:textSize="20dp"
-            />
+            android:textSize="20dp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

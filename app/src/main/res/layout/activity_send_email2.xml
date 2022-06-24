@@ -5,11 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SendEmail2">
+
     <LinearLayout
         android:layout_width="409dp"
         android:layout_height="729dp"
-        android:orientation="vertical"
         android:gravity="center"
+        android:orientation="vertical"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp">
 
@@ -18,8 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="30dp"
-            android:text="Show Results" />
+            android:text="Show Results"
+            android:textSize="30dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,8 +32,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="25dp"
-                android:text="Name:" />
+                android:text="Name:"
+                android:textSize="25dp" />
 
             <EditText
                 android:id="@+id/editTextName"
@@ -40,11 +41,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:textSize="25dp"
+                android:hint="Name"
 
                 android:inputType="textPersonName"
-                android:hint="Name" />
+                android:textSize="25dp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,8 +57,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="25dp"
-                android:text="Age:" />
+                android:text="Age:"
+                android:textSize="25dp" />
 
             <EditText
                 android:id="@+id/editTextAge"
@@ -64,10 +66,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:textSize="25dp"
+                android:hint="Age"
                 android:inputType="number"
-                android:hint="Age" />
+                android:textSize="25dp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -78,8 +81,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="25dp"
-                android:text="Weight:" />
+                android:text="Weight:"
+                android:textSize="25dp" />
 
             <EditText
                 android:id="@+id/editTextWeight"
@@ -87,10 +90,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:textSize="25dp"
+                android:hint="Weight"
                 android:inputType="number"
-                android:hint="Weight" />
+                android:textSize="25dp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -101,8 +105,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="25dp"
-                android:text="Height:" />
+                android:text="Height:"
+                android:textSize="25dp" />
 
             <EditText
                 android:id="@+id/editTextHeight"
@@ -110,22 +114,24 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:textSize="25dp"
+                android:hint="Height"
                 android:inputType="number"
-                android:hint="Height" />
+                android:textSize="25dp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="25dp"
-                android:text="E-mail:" />
+                android:text="E-mail:"
+                android:textSize="25dp" />
 
             <EditText
                 android:id="@+id/editTextEmail"
@@ -133,22 +139,24 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:textSize="25dp"
+                android:hint="E-mail"
                 android:inputType="textEmailAddress"
-                android:hint="E-mail" />
+                android:textSize="25dp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="25dp"
-                android:text="Phone:" />
+                android:text="Phone:"
+                android:textSize="25dp" />
 
             <EditText
                 android:id="@+id/editTextPhone"
@@ -156,22 +164,24 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:textSize="25dp"
+                android:hint="Phone"
                 android:inputType="phone"
-                android:hint="Phone" />
+                android:textSize="25dp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="25dp"
-                android:text="Password:" />
+                android:text="Password:"
+                android:textSize="25dp" />
 
             <EditText
                 android:id="@+id/editTextPassword"
@@ -179,17 +189,17 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:textSize="25dp"
+                android:hint="Password"
                 android:inputType="textPassword"
-                android:hint="Password" />
+                android:textSize="25dp" />
         </LinearLayout>
 
         <Button
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30dp"
-            android:text="Submit" />
+            android:text="Submit"
+            android:textSize="30dp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

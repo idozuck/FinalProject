@@ -20,9 +20,9 @@ public class SendEmail2 extends AppCompatActivity {
         EditText ageView = (EditText) findViewById(R.id.editTextAge);
         EditText weightView = (EditText) findViewById(R.id.editTextWeight);
         EditText heightView = (EditText) findViewById(R.id.editTextHeight);
-        EditText emailView = (EditText) findViewById(R.id.editTextEmail);
-        EditText phoneView = (EditText) findViewById(R.id.editTextPhone);
-        EditText passwordView = (EditText) findViewById(R.id.editTextPassword);
+//        EditText emailView = (EditText) findViewById(R.id.editTextEmail);
+//        EditText phoneView = (EditText) findViewById(R.id.editTextPhone);
+//        EditText passwordView = (EditText) findViewById(R.id.editTextPassword);
 
         sendEmail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -31,9 +31,9 @@ public class SendEmail2 extends AppCompatActivity {
                 String age = ageView.getText().toString();
                 String weight = weightView.getText().toString();
                 String height = heightView.getText().toString();
-                String email = emailView.getText().toString();
-                String phone = phoneView.getText().toString();
-                String password = passwordView.getText().toString();
+//                String email = emailView.getText().toString();
+//                String phone = phoneView.getText().toString();
+//                String password = passwordView.getText().toString();
                 System.out.println();
                 openResults();
             }
