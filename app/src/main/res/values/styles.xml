@@ -1,7 +1,7 @@
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorSendText</item>
+        <item name="colorPrimaryDark">@color/colorSendText</item>
+        <item name="colorAccent">@color/colorSendText</item>
     </style>
 </resources>

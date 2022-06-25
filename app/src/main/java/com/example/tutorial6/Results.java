@@ -40,13 +40,10 @@ public class Results extends AppCompatActivity {
     private List<Double> accZ = new ArrayList<Double>();
 
     private Python py;
-    private PyObject pyobj;
-    private PyObject obj;
+    private PyObject pyobj, obj;
 
     private String name;
-    private float weight;
-    private float age;
-    private float height;
+    private float weight, age,height;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

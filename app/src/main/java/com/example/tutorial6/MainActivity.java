@@ -40,34 +40,25 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
     // Record Activity
     private volatile boolean running = false;
     private volatile boolean firstRunning = false;
-    private Runnable t;
-    private Handler hand;
-    private TextView HR_text;
-    private TextView SPO2_text;
-    private TextView BP_text;
     private final int OldRange = (250000 - 200000);
     private final int NewRange = 3;
-    private double newval_ppg;
-    private String time_str;
-    private String heart_rate;
-    private String valid_heart_rate;
-    private String spo2;
-    private String valid_spo2;
-    private String ppg;
-    private String accX;
-    private String accY;
-    private String accZ;
-
     private final int historyLength = 50;
+    private final String acc_data_path = "/storage/self/primary/IoT/data.csv";
+    private final String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+    private final String dirPath = baseDir + File.separator + "IOT_out_files";
+    private final String filePath = dirPath + File.separator + "record_file.csv";
+
+    private Runnable t;
+    private Handler hand;
+    private TextView HR_text, SPO2_text, BP_text;
+    private double newval_ppg;
+    private String heart_rate, spo2, ppg, accX, accY, accZ;
+
     private int history = 0;
     private Double[] heart_rate_list = new Double[historyLength];
     private Double[] spo2_list = new Double[historyLength];
     private Double[] ppg_list = new Double[historyLength];
 
-    private final String acc_data_path = "/storage/self/primary/IoT/data.csv";
-    private final String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
-    private final String dirPath = baseDir + File.separator + "IOT_out_files";
-    private final String filePath = dirPath + File.separator + "record_file.csv";
     private List<String[]> data = new ArrayList<String[]>();
 
     @Override
@@ -126,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!running){
+                if (!running) {
                     toast("You have to start first");
                     return;
                 }
@@ -186,11 +177,11 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
                             String text_row = buff_read.readLine();
                             String new_text_row = text_row.replace('"', '\0');
                             String[] statsArray = new_text_row.split(",");
-                            time_str = statsArray[0];
+//                            time_str = statsArray[0];
                             heart_rate = statsArray[1];
-                            valid_heart_rate = statsArray[2];
+//                            valid_heart_rate = statsArray[2];
                             spo2 = statsArray[3];
-                            valid_spo2 = statsArray[4];
+//                            valid_spo2 = statsArray[4];
                             ppg = statsArray[5];
                             accX = statsArray[6];
                             accY = statsArray[7];
@@ -268,129 +259,6 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
     }
-
-    //Record Activity
-//    private Boolean ClickStartRecordButton() {
-//        //get file name
-//        EditText fileNameView = (EditText) findViewById(R.id.fileName);
-//        if (TextUtils.isEmpty(fileNameView.getTextAVG())) {
-//            fileNameView.setError("File name is required!");
-//            return false;
-//        }
-//        this.fileName = fileNameView.getTextAVG().toString();
-//
-//        //get number of steps
-//        EditText numberOfStepsView = (EditText) findViewById(R.id.numberOfSteps);
-//        if (TextUtils.isEmpty(numberOfStepsView.getTextAVG())) {
-//            numberOfStepsView.setError("Number of steps is required!");
-//            return false;
-//        }
-//
-//        //get time
-//        String currentTime = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
-//
-//        //write to csv
-//        File f = new File(filePath);
-//        if (f.exists()) {
-//            Context context = getApplicationContext();
-//            CharSequence text = "File name already exists";
-//            int duration = Toast.LENGTH_SHORT;
-//
-//            Toast toast = Toast.makeText(context, text, duration);
-//            toast.show();
-//            return false;
-//        }
-//
-//        //set data
-//        this.data_record.add(new String[]{"NAME:", this.fileName + ".csv"});
-//        this.data_record.add(new String[]{"EXPERIMENT TIME:", currentTime});
-//        this.data_record.add(new String[]{"ACTIVITY TYPE:", activity});
-//        this.data_record.add(new String[]{"COUNT OF ACTUAL STEPS", numberOfSteps});
-//        this.data_record.add(new String[]{"ESTIMATED NUMBER OF STEPS", String.valueOf(step_count)});
-//
-//
-//        this.data_record.add(new String[]{});
-//        this.data_record.add(new String[]{"Time [sec]", "ACC X", "ACC Y", "ACC Z"});
-//
-//        collectingData = true;
-//
-//        //show starting message
-//        Context context = getApplicationContext();
-//        CharSequence text = "Starting...";
-//        int duration = Toast.LENGTH_SHORT;
-//        Toast toast = Toast.makeText(context, text, duration);
-//        toast.show();
-//        return true;
-//    }
-//
-//    private void ClickStopRecordButton() {
-//        //check if didn't started yet
-//        if (!collectingData) {
-//            Context context = getApplicationContext();
-//            CharSequence text = "you didn't started yet";
-//            int duration = Toast.LENGTH_SHORT;
-//
-//            Toast toast = Toast.makeText(context, text, duration);
-//            toast.show();
-//            return;
-//        }
-//        collectingData = false;
-//        doneCollectingData = true;
-//
-//        //show starting message
-//        Context context = getApplicationContext();
-//        CharSequence text = "Stopping...";
-//        int duration = Toast.LENGTH_SHORT;
-//        Toast toast = Toast.makeText(context, text, duration);
-//        toast.show();
-//    }
-//
-//    private void ClickSaveRecordButton() {
-//        if (!doneCollectingData) {
-//            Context context = getApplicationContext();
-//            CharSequence text = "you didn't stop yet";
-//            int duration = Toast.LENGTH_SHORT;
-//            Toast toast = Toast.makeText(context, text, duration);
-//            toast.show();
-//            return;
-//        }
-//        doneCollectingData = false;
-//
-//        //write to csv
-//        CSVWriter writer;
-//        String csv = (Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "IOT_out_files" + File.separator + this.fileName + ".csv");
-//        try {
-//            writer = new CSVWriter(new FileWriter(csv));
-//            this.data_record.set(4, new String[]{"ESTIMATED NUMBER OF STEPS", String.valueOf(step_count)});
-//            writer.writeAll(this.data_record); // data is adding to csv
-//            writer.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        //show saving message
-//        Context context = getApplicationContext();
-//        CharSequence text = "Saving...";
-//        int duration = Toast.LENGTH_SHORT;
-//        Toast toast = Toast.makeText(context, text, duration);
-//        toast.show();
-//        ClickResetRecordButton();
-//    }
-//
-//    private void ClickResetRecordButton() {
-//        data_record = new ArrayList<String[]>();
-//        N_list = new ArrayList<Double>();
-//        collectingData = false;
-//        doneCollectingData = false;
-//        step_count = 0;
-//
-//        //show resetting message
-//        Context context = getApplicationContext();
-//        CharSequence text = "Resetting...";
-//        int duration = Toast.LENGTH_SHORT;
-//        Toast toast = Toast.makeText(context, text, duration);
-//        toast.show();
-//    }
 
     public void openSendEmailActivity() {
         Intent intent = new Intent(this, SendEmail2.class);

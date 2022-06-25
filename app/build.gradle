@@ -2,8 +2,6 @@ plugins {
     id 'com.android.application'
     id 'com.chaquo.python'
 }
-//apply plugin: 'com.android.application'
-//apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 29
     defaultConfig {
@@ -20,14 +18,14 @@ android {
         }
 
         python {
-            //buildPython "C:/Users/atsai/PycharmProjects/untitled/venv/scripts/python.exe"
-//            buildPython "C:/Users/atsai/anaconda3/envs/IOT/python.exe"//TODO: change
-            buildPython "C:/Users/idozu/Anaconda3/envs/base-Ido/python.exe"//TODO: change
+//            buildPython "C:/Users/atsai/anaconda3/envs/IOT/python.exe"
+//            buildPython "C:/Users/idozu/Anaconda3/envs/base-Ido/python.exe"
+            buildPython "C:/Users/idozu/Anaconda3/envs/IoT1/python.exe"
 
             pip {
                 install "tensorflow"
                 install "numpy"
-                install "joblib"
+//                install "joblib"
             }
 
         }
@@ -54,14 +52,13 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.3.0'
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     implementation 'com.opencsv:opencsv:4.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.annotation:annotation:1.2.0'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+    implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     implementation 'com.google.android.material:material:1.3.0'
+//    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+//    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+//    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

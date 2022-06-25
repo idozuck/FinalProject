@@ -1,10 +1,5 @@
 package com.example.tutorial6;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import java.io.FileReader;
-import java.io.*;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -13,15 +8,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
@@ -30,12 +21,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,24 +28,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.opencsv.CSVWriter;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
 
 public class TerminalFragment extends Fragment implements ServiceConnection, SerialListener {
 
@@ -164,11 +136,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_terminal, container, false);
-        View viewMain = inflater.inflate(R.layout.activity_main, container, false);
-//        RelativeLayout relativeLayout = (RelativeLayout) viewMain.findViewById(R.id.fragment);
-//        Button button = (Button) viewMain.findViewById(R.id.startButton);
-//        relativeLayout.setVisibility(View.GONE);
-//        button.setVisibility(View.GONE);
         receiveText = view.findViewById(R.id.receive_text);                          // TextView performance decreases with number of spans
         receiveText.setTextColor(getResources().getColor(R.color.colorRecieveText)); // set as default color to reduce number of spans
         receiveText.setMovementMethod(ScrollingMovementMethod.getInstance());
@@ -228,8 +195,6 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         for (int i = 0; i < stringsArr.length; i++) {
             stringsArr[i] = stringsArr[i].replaceAll(" ", "");
         }
-
-
         return stringsArr;
     }
 
@@ -363,11 +328,4 @@ public class TerminalFragment extends Fragment implements ServiceConnection, Ser
         status("connection lost: " + e.getMessage());
         disconnect();
     }
-
-    private ArrayList<Entry> emptyDataValues() {
-        ArrayList<Entry> dataVals = new ArrayList<Entry>();
-        return dataVals;
-    }
-
-
 }
