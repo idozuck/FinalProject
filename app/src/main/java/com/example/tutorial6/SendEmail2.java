@@ -31,9 +31,9 @@ public class SendEmail2 extends AppCompatActivity {
                 String age = ageView.getText().toString();
                 String weight = weightView.getText().toString();
                 String height = heightView.getText().toString();
-//                String email = emailView.getText().toString();
-//                String phone = phoneView.getText().toString();
-//                String password = passwordView.getText().toString();
+//                String email = emailView.getTextAVG().toString();
+//                String phone = phoneView.getTextAVG().toString();
+//                String password = passwordView.getTextAVG().toString();
                 System.out.println();
                 openResults();
             }

@@ -8,6 +8,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.chaquo.python.PyObject;
+import com.chaquo.python.Python;
+import com.chaquo.python.android.AndroidPlatform;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -34,12 +38,20 @@ public class Results extends AppCompatActivity {
     private List<Double> accY = new ArrayList<Double>();
     private List<Double> accZ = new ArrayList<Double>();
 
+    private Python py;
+    private PyObject pyobj;
+    private PyObject obj;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
         Button buttonBack = (Button) findViewById(R.id.buttonBack);
-
+        if (!Python.isStarted()) {
+            Python.start(new AndroidPlatform(this));
+        }
+        py = Python.getInstance();
+        pyobj = py.getModule("test");
         try {
             Scanner sc = new Scanner(new File(filePath));
             sc.useDelimiter("\n");
@@ -65,9 +77,13 @@ public class Results extends AppCompatActivity {
         TextView textViewHR = (TextView) findViewById(R.id.avgHeartRate);
         TextView textViewSPO2 = (TextView) findViewById(R.id.avgSPo2);
         TextView textViewBP = (TextView) findViewById(R.id.avgBloodPressure);
-        textViewHR.setText("Average Heart Rate: " + getText(heart_rate, false));
-        textViewSPO2.setText("Average SPo2: " + getText(spo2, false));
-        textViewBP.setText("Average Blood Pressure: " + getText(ppg, true));
+        TextView textViewSBP = (TextView) findViewById(R.id.SystolicPressure);
+        TextView textViewDBP = (TextView) findViewById(R.id.DiastolicPressure);
+        textViewHR.setText("Average Heart Rate: " + getTextAVG(heart_rate, false));
+        textViewSPO2.setText("Average SPo2: " + getTextAVG(spo2, false));
+        textViewBP.setText("Average Arterial Blood Pressure: " + getTextAVG(ppg, true));
+        textViewSBP.setText("Systolic Pressure: " + getTextMax(ppg, true));
+        textViewDBP.setText("Diastolic Pressure: " + getTextMin(ppg, true));
 
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +97,23 @@ public class Results extends AppCompatActivity {
         });
     }
 
-    public String getText(List<? extends Number> list, boolean bpFlag) {
+    public String getTextMax(List<? extends Number> list, boolean bpFlag) {
+        double max = max(list, bpFlag);
+        if (max > 0)
+            return String.valueOf(Math.round(max));
+        else
+            return "Not enough data";
+    }
+
+    public String getTextMin(List<? extends Number> list, boolean bpFlag) {
+        double min = min(list, bpFlag);
+        if (min > 0)
+            return String.valueOf(Math.round(min));
+        else
+            return "Not enough data";
+    }
+
+    public String getTextAVG(List<? extends Number> list, boolean bpFlag) {
         double avg = avg(list, bpFlag);
         if (avg > 0)
             return String.valueOf(Math.round(avg));
@@ -89,15 +121,66 @@ public class Results extends AppCompatActivity {
             return "Not enough data";
     }
 
+    public double max(List<? extends Number> list, boolean bpFlag) {
+        double max = 0.0;
+        double val;
+        boolean found = false;
+        for (Number i : list) {
+            if (bpFlag) {
+                val = (((i.doubleValue() - 200000) * NewRange) / OldRange) + 0.5;
+                obj = pyobj.callAttr("calc_BP", val);
+                val = Double.parseDouble(obj.toString());
+            } else
+                val = i.doubleValue();
+            if (val > 0.0) {
+                if (val > max) {
+                    max = val;
+                    found = true;
+                }
+            }
+        }
+        if (found)
+            return max;
+        return 0.0;
+    }
+
+    public double min(List<? extends Number> list, boolean bpFlag) {
+        double min = 300.0;
+        double val;
+        boolean found = false;
+        for (Number i : list) {
+            if (bpFlag) {
+                val = (((i.doubleValue() - 200000) * NewRange) / OldRange) + 0.5;
+                obj = pyobj.callAttr("calc_BP", val);
+                val = Double.parseDouble(obj.toString());
+            } else
+                val = i.doubleValue();
+            if (val > 0.0) {
+                if (val < min) {
+                    min = val;
+                    found = true;
+                }
+            }
+        }
+        if (found)
+            return min;
+        return 0.0;
+    }
+
+
     public double avg(List<? extends Number> list, boolean bpFlag) {
         double sum = 0.0;
         int counter = 0;
+        double val;
         for (Number i : list) {
             if (i.doubleValue() > 0.0) {
-                if (bpFlag)
-                    sum += (((i.doubleValue() - 200000) * NewRange) / OldRange) + 0.5;
-                else
-                    sum += i.doubleValue();
+                if (bpFlag) {
+                    val = (((i.doubleValue() - 200000) * NewRange) / OldRange) + 0.5;
+                    obj = pyobj.callAttr("calc_BP", val);
+                    val = Double.parseDouble(obj.toString());
+                } else
+                    val = i.doubleValue();
+                sum += val;
                 counter += 1;
             }
         }

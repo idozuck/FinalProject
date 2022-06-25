@@ -271,15 +271,15 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 //    private Boolean ClickStartRecordButton() {
 //        //get file name
 //        EditText fileNameView = (EditText) findViewById(R.id.fileName);
-//        if (TextUtils.isEmpty(fileNameView.getText())) {
+//        if (TextUtils.isEmpty(fileNameView.getTextAVG())) {
 //            fileNameView.setError("File name is required!");
 //            return false;
 //        }
-//        this.fileName = fileNameView.getText().toString();
+//        this.fileName = fileNameView.getTextAVG().toString();
 //
 //        //get number of steps
 //        EditText numberOfStepsView = (EditText) findViewById(R.id.numberOfSteps);
-//        if (TextUtils.isEmpty(numberOfStepsView.getText())) {
+//        if (TextUtils.isEmpty(numberOfStepsView.getTextAVG())) {
 //            numberOfStepsView.setError("Number of steps is required!");
 //            return false;
 //        }

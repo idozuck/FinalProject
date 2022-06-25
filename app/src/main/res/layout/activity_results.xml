@@ -9,17 +9,24 @@
     <LinearLayout
         android:layout_width="409dp"
         android:layout_height="729dp"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp">
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="100dp" />
+
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             android:text="Results"
             android:textSize="30dp" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="80dp" />
 
         <TextView
             android:id="@+id/avgHeartRate"
@@ -39,15 +46,28 @@
             android:id="@+id/avgBloodPressure"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="Average Blood Pressure"
+            android:text="Average Arterial Blood Pressure"
             android:textSize="20dp" />
 
+        <TextView
+            android:id="@+id/SystolicPressure"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Systolic Pressure"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/DiastolicPressure"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Diastolic Pressure"
+            android:textSize="20dp" />
 
         <Button
             android:id="@+id/buttonBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Go Back"
-            android:textSize="20dp" />
+            android:textSize="25dp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
