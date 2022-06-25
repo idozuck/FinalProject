@@ -16,7 +16,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="100dp" />
+            android:layout_height="50dp" />
 
         <TextView
             android:id="@+id/textView"
@@ -24,9 +24,10 @@
             android:layout_height="wrap_content"
             android:text="Results"
             android:textSize="30dp" />
+
         <Space
             android:layout_width="match_parent"
-            android:layout_height="80dp" />
+            android:layout_height="50dp" />
 
         <TextView
             android:id="@+id/avgHeartRate"
@@ -63,11 +64,40 @@
             android:text="Diastolic Pressure"
             android:textSize="20dp" />
 
+        <TextView
+            android:id="@+id/BMI"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="BMI"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/Summery"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:text="Summery"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/HealthScore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Your health score:"
+            android:textSize="20dp"/>
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:isIndicator="true"
+            android:numStars="5" />
+
+
         <Button
             android:id="@+id/buttonBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Go Back"
-            android:textSize="25dp" />
+            android:textSize="20dp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

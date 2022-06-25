@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.chaquo.python.PyObject;
@@ -42,10 +43,21 @@ public class Results extends AppCompatActivity {
     private PyObject pyobj;
     private PyObject obj;
 
+    private String name;
+    private float weight;
+    private float age;
+    private float height;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
+        Intent intent = getIntent();
+        name = intent.getStringExtra("name");
+        weight = Float.parseFloat(intent.getStringExtra("weight"));
+        age = Float.parseFloat(intent.getStringExtra("age"));
+        height = Float.parseFloat(intent.getStringExtra("height"));
+
         Button buttonBack = (Button) findViewById(R.id.buttonBack);
         if (!Python.isStarted()) {
             Python.start(new AndroidPlatform(this));
@@ -79,11 +91,22 @@ public class Results extends AppCompatActivity {
         TextView textViewBP = (TextView) findViewById(R.id.avgBloodPressure);
         TextView textViewSBP = (TextView) findViewById(R.id.SystolicPressure);
         TextView textViewDBP = (TextView) findViewById(R.id.DiastolicPressure);
+        TextView textViewSummery = (TextView) findViewById(R.id.Summery);
+        TextView textViewBMI = (TextView) findViewById(R.id.BMI);
         textViewHR.setText("Average Heart Rate: " + getTextAVG(heart_rate, false));
         textViewSPO2.setText("Average SPo2: " + getTextAVG(spo2, false));
         textViewBP.setText("Average Arterial Blood Pressure: " + getTextAVG(ppg, true));
         textViewSBP.setText("Systolic Pressure: " + getTextMax(ppg, true));
         textViewDBP.setText("Diastolic Pressure: " + getTextMin(ppg, true));
+        RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+
+        float BMI = calculateBMI();
+        textViewBMI.setText("BMI: " + String.valueOf(Math.round(BMI)));
+        textViewSummery.setText("Summery:\nYou are " + BMICategory(BMI) + "\n" + BloodPressureCategory(ppg));
+
+        int stars = HealthScore(BMI, ppg);
+        ratingBar.setRating(stars);
+//        ratingBar.setClickable(false);
 
         buttonBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +118,127 @@ public class Results extends AppCompatActivity {
                 }
             }
         });
+    }
+
+
+    private int HealthScore(float bmi, List<? extends Number> listBP) {
+        int healthScore = 5;
+        if (bmi < 18.5)
+            healthScore--;
+        else if (bmi < 25)
+            healthScore += 0;
+        else if (bmi < 30)
+            healthScore--;
+        else
+            healthScore -= 2;
+
+        double sbp = max(listBP, true);
+        double dbp = min(listBP, true);
+        boolean sbpFlag = false;
+        boolean dbpFlag = false;
+        if (age < 2) {
+            if (sbp >= 80 && sbp <= 100)
+                sbpFlag = true;
+            if (dbp >= 40 && dbp <= 70)
+                dbpFlag = true;
+        } else if (age < 13) {
+            if (sbp >= 80 && sbp <= 120)
+                sbpFlag = true;
+            if (dbp >= 40 && dbp <= 80)
+                dbpFlag = true;
+        } else if (age < 18) {
+            if (sbp >= 90 && sbp <= 120)
+                sbpFlag = true;
+            if (dbp >= 50 && dbp <= 80)
+                dbpFlag = true;
+        } else if (age < 40) {
+            if (sbp >= 95 && sbp <= 135)
+                sbpFlag = true;
+            if (dbp >= 60 && dbp <= 80)
+                dbpFlag = true;
+        } else if (age < 60) {
+            if (sbp >= 110 && sbp <= 145)
+                sbpFlag = true;
+            if (dbp >= 70 && dbp <= 90)
+                dbpFlag = true;
+        } else {
+            if (sbp >= 95 && sbp <= 145)
+                sbpFlag = true;
+            if (dbp >= 70 && dbp <= 90)
+                dbpFlag = true;
+        }
+        if (!sbpFlag)
+            healthScore--;
+        if (!dbpFlag)
+            healthScore--;
+        return healthScore;
+    }
+
+    private float calculateBMI() {
+        float bmi = (100 * 100 * weight) / (height * height);
+        return bmi;
+
+    }
+
+    private String BMICategory(float bmi) {
+        if (bmi < 18.5)
+            return "underweight";
+        if (bmi < 25)
+            return "normal weight";
+        if (bmi < 30)
+            return "overweight";
+        return "obese";
+    }
+
+    private String BloodPressureCategory(List<? extends Number> list) {
+        double sbp = max(list, true);
+        double dbp = min(list, true);
+        boolean sbpFlag = false;
+        boolean dbpFlag = false;
+        if (!(dbp > 0 && sbp > 0))
+            return "";
+        if (age < 2) {
+            if (sbp >= 80 && sbp <= 100)
+                sbpFlag = true;
+            if (dbp >= 40 && dbp <= 70)
+                dbpFlag = true;
+        } else if (age < 13) {
+            if (sbp >= 80 && sbp <= 120)
+                sbpFlag = true;
+            if (dbp >= 40 && dbp <= 80)
+                dbpFlag = true;
+        } else if (age < 18) {
+            if (sbp >= 90 && sbp <= 120)
+                sbpFlag = true;
+            if (dbp >= 50 && dbp <= 80)
+                dbpFlag = true;
+        } else if (age < 40) {
+            if (sbp >= 95 && sbp <= 135)
+                sbpFlag = true;
+            if (dbp >= 60 && dbp <= 80)
+                dbpFlag = true;
+        } else if (age < 60) {
+            if (sbp >= 110 && sbp <= 145)
+                sbpFlag = true;
+            if (dbp >= 70 && dbp <= 90)
+                dbpFlag = true;
+        } else {
+            if (sbp >= 95 && sbp <= 145)
+                sbpFlag = true;
+            if (dbp >= 70 && dbp <= 90)
+                dbpFlag = true;
+        }
+
+        String msg;
+        if (sbpFlag)
+            msg = "Your systolic pressure is good";
+        else
+            msg = "Your systolic pressure is not good";
+        if (dbpFlag)
+            msg += "\nYour diastolic pressure is good";
+        else
+            msg += "\nYour diastolic pressure is not good";
+        return msg;
     }
 
     public String getTextMax(List<? extends Number> list, boolean bpFlag) {

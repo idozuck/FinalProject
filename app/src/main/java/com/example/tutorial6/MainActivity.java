@@ -126,8 +126,10 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (running)
+                if (!running){
                     toast("You have to start first");
+                    return;
+                }
                 running = false;
                 toast("Stopped");
             }
